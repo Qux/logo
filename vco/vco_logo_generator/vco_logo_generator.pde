@@ -1,6 +1,9 @@
 import processing.pdf.*;
 
 float mod = 0.01;
+float b = 1.0;
+float phase;
+boolean dosave=false;
 
 float tri(int angle) {
   angle = angle % 360;  //rescale input into 0 ~ 360
@@ -13,7 +16,7 @@ float tri(int angle) {
     val = angle / 90.0;
     break;
   case 1:
-    val = 1.0 - float(angle - 90) / 90.0;
+    val = 1.0 - (angle - 90) / 90.0;
     break;
   case 2:
     val = 1.0 - (angle - 90.0) / 90.0;
@@ -31,25 +34,45 @@ void setup() {
   background(255);
   stroke(0);
   strokeWeight(1.0);
+
+  phase = 0.0;
+
+  for (int i = 0; i < width; i++) {
+
+    float phase2 = phase + pow(sin(PI * float(i+1) / width), 10) * b + 1;
+    print(phase + ":");
+    float dx = pow(sin(PI * float(i) / width), 10) * b + 1;
+    phase += dx;
+  }
 }
-
-
-
 
 void draw() {
   background(255);
-  pushMatrix();
-  translate(0, height*0.5);
 
-  for (int i = 0; i < width; i++) {
-    //float angle = sin(TWO_PI * i / width;
-    //int p1 = int(sin( i  / width * PI) * 360.0) + 360;
-    //int p2 = int(sin(i+1 / width * PI) * 360.0) + 360;
-    
-    line(i, tri(i)*200, i+1, tri(i+1) * 200);
+  phase = 0.0;
+
+  if (dosave) {
+    beginRecord(PDF, "out.pdf");
   }
 
-  popMatrix();
+  for (int i = 0; i < width; i++) {
+
+    if ( i < 360) {
+      line(i, tri(i)*200.0+ 400, i+1, tri(i+1) * 200.0+ 400);
+    } else {
+      float phase2 = phase + pow(sin(PI * 0.5 * float(i+1) / width), 10) * b + 1;
+      line(i, tri(int(phase) )*200.0 + 400, i+1, tri(int(phase2)) * 200.0 + 400);
+
+      float dx = pow(sin(PI * 0.5 * float(i) / width), 10) * b + 1;
+      phase += dx;
+    }
+  }
+
+  if (dosave) {
+    endRecord();
+    exit();
+  }
+
 }
 
 
@@ -57,14 +80,22 @@ void keyPressed() {
   if (key == CODED) {
     switch(keyCode) {
     case UP:
-      mod *= 2.0;
+      b *= 2.0;
+      println(b);
       break;
     case DOWN:
       if (0.0 < mod) {
-        mod *= 0.5;
+        b *= 0.5;
       }
+      println(b);
       break;
     default:
+      break;
+    }
+  } else {
+    switch(key) {
+      case 's':
+      dosave=true;
       break;
     }
   }
