@@ -1,7 +1,7 @@
 import processing.pdf.*;
 
 float mod = 0.01;
-float b = 8.0;
+float b = 4.0;//8.0
 float phase;
 Float power = 4.0;
 boolean dosave=false;
@@ -69,10 +69,10 @@ void draw() {
     //  phase += dx;
     //}
 
-    float phase2 = phase + pow(sin(HALF_PI * float(i+1) / width), power) * b + 1;
+    float phase2 = phase + pow(sin(PI * float(i+1) / width), power) * b + 1;
     //line(i, tri(int(phase) )*200.0 + 400, i+1, tri(int(phase2)) * 200.0 + 400);
     vertex(i, tri(int(phase)) * 200.0 + 400);
-    float dx = pow(sin(HALF_PI * float(i) / width), power) * b + 1;
+    float dx = pow(sin(PI * float(i) / width), power) * b + 1;
     phase += dx;
   }
   endShape();
